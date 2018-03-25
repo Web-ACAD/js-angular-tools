@@ -1,0 +1,16 @@
+{
+	"compilerOptions": {
+		"target": "es5",
+		"removeComments": true,
+		"declaration": true,
+		"lib": [
+			"es2016", "dom", "esnext.asynciterable"
+		]
+	},
+	"include": [
+		"./**/*.ts"
+	],
+	"exclude": [
+		"./node_modules"
+	]
+}

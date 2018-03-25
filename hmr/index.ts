@@ -1,0 +1,1 @@
+export {hmrBootstrap} from './bootstrap';

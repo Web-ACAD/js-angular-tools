@@ -1,0 +1,1 @@
+export {assetHelperFactory} from './helpers';

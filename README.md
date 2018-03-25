@@ -1,0 +1,208 @@
+[![NPM version](https://img.shields.io/npm/v/@webacad/angular-tools.svg?style=flat-square)](https://www.npmjs.com/package/@webacad/angular-tools)
+[![Build Status](https://img.shields.io/travis/Web-ACAD/js-angular-tools.svg?style=flat-square)](https://travis-ci.org/Web-ACAD/js-angular-tools)
+
+# WebACAD/AngularTools
+
+Ready to use tool set for angular applications
+
+## Includes
+
+* Express server
+* Handlebars template engine for server
+* HMR (hot module replacement)
+* Webpack
+    + Development/production modes
+    + Multiple entries
+    + Hashed chunks
+    + @ngtools/webpack + AngularCompilerPlugin
+    + file-loader for fonts
+    + webpack.DefinePlugin
+* Sass + PostCSS
+
+## Installation
+
+```bash
+$ npm install --save-dev @webacad/angular-tools
+```
+
+or with yarn
+
+```bash
+$ yarn add --dev @webacad/angular-tools
+```
+
+## About documentation
+
+**All examples are written in typescript.**
+
+## Configure webpack
+
+**webpack.config.ts:**
+
+```typescript
+import {webpackConfigFactory} from '@webacad/angular-tools/webpack';
+import * as webpack from 'webpack';
+
+const environment: string = 'development';    // possible values are "development" or "production"
+
+function createWebpackConfig(): webpack.Configuration
+{
+    return webpackConfigFactory(environment, {
+        root: __dirname,
+        distDir: '/path/to/public/dist/directory',
+        publicPath: '/url/path',
+        hmr: true,
+        sourceMaps: true,
+        angular: {
+            entryModule: './app.module#AppModule',
+        },
+        postcss: {
+            config: '/path/to/postcss/config.js',
+        },
+        webpack: {
+            analyze: true,
+            fonts: {
+                outputPath: 'relative/path/to/publicPath',
+                publicPath: '/url/path',
+            },
+            plugins: {
+                define: {
+                    'process.env': {
+                        'NODE_ENV': `'${environment}'`,
+                    },
+                },
+            },
+            entry: {
+                polyfills: './app/polyfills.ts',
+                app: './app/main.ts',
+                styles: './styles/index.scss',
+            },
+        },
+    });
+}
+
+export default createWebpackConfig;
+```
+
+## Configure express server
+
+**server/server.ts:**
+
+```typescript
+import {createServer} from '@webacad/angular-tools/expresjs';
+import createWebpackConfig from '../webpack.config';
+
+const environment: string = 'development';
+
+createServer(environment, createWebpackConfig(), {
+    root: __dirname,
+    port: 8080,
+    hmr: true,
+    staticPaths: {
+        '/public': '/path/to/public/dist',    // using express.static
+    },
+    parameters: {    // parameters passed to handlebar templates
+        isDevelopment: environment === 'development',
+        isProduction: environment === 'production',
+        isHmr: true,
+    },
+});
+```
+
+**server/views/index.handlebars:**
+
+```html
+<!DOCTYPE html>
+<html lang="cs">
+    <head>
+        <meta charset="UTF-8">
+        <base href="/">
+
+        {{#if isProduction}}
+            <link rel="stylesheet" href="{{assets 'styles/css'}}">
+        {{/if}}
+    </head>
+    <body>
+        <my-app>Loading...</my-app>
+
+        <script src="{{asset 'manifest/js'}}"></script>
+
+        {{#if isHmr}}
+            <script src="{{asset 'hmr/js'}}"></script>
+        {{/if}}
+
+        {{#if isDevelopment}}
+            <script src="{{asset 'styles/js'}}"></script>
+        {{/if}}
+
+        <script src="{{asset 'polyfills/js'}}"></script>
+        <script src="{{asset 'app/js'}}"></script>
+    </body>
+</html>
+```
+
+## Assets
+
+**Styles/css:**
+
+Automatically generated css file which should be used only in production environment.
+
+**Manifest/js:**
+
+Automatically generated manifest file.
+
+**Hmr/js:**
+
+Automatically generated hmr configuration (only if hmr is allowed). 
+
+**Styles/js:**
+
+Automatically generated js file with styles which should be used only in development environment.
+
+**Polyfills/js:**
+
+Your polyfills.ts entry file.
+
+**App/js:**
+
+Your app.ts entry file.
+
+## Main.ts file
+
+```typescript
+import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
+import {enableProdMode} from '@angular/core';
+import {hmrBootstrap} from '@webacad/angular-tools/hmr';
+
+import {AppModule} from './app.module';
+
+const bootstrap = () => platformBrowserDynamic().bootstrapModule(AppModule);
+
+if (process.env.NODE_ENV === 'production') {
+	enableProdMode();
+	bootstrap();
+
+} else {
+	Error['stackTraceLimit'] = Infinity;
+	require('zone.js/dist/long-stack-trace-zone');
+
+	if (module['hot']) {
+		hmrBootstrap(module, bootstrap);
+	} else {
+		bootstrap();
+	}
+}
+```
+
+## Update scripts in package.json
+
+**package.json:**
+
+```json
+{
+    "scripts": {
+    	"build": "webpack",
+    	"start": "ts-node server/server.ts"
+    }
+}
+```
