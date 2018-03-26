@@ -38,9 +38,9 @@
 		"webpack-hot-middleware": "^2.21.2"
 	},
 	"peerDependencies": {
-		"@angular/core": "<=5.0.0",
+		"@angular/core": ">=5.0.0",
 		"@angularclass/hmr": "*",
-		"rxjs": "<=5.5.7"
+		"rxjs": ">=5.5.7"
 	},
 	"devDependencies": {
 		"@types/node": "8.0.19",
