@@ -14,7 +14,7 @@ import * as _ from 'lodash';
 
 export declare interface ExpressServerOptions
 {
-	root: string,
+	index: string,
 	port: number,
 	staticPaths?: {[url: string]: string},
 	hmr?: boolean,
@@ -37,7 +37,6 @@ export function createServer(environment: EnvironmentType, webpackConfig: webpac
 
 	app.engine('handlebars', hbs.engine);
 	app.set('view engine', 'handlebars');
-	app.set('views', path.join(options.root, 'views'));
 
 	if (isDev) {
 		app.use(nocache());
@@ -79,7 +78,7 @@ export function createServer(environment: EnvironmentType, webpackConfig: webpac
 	}
 
 	app.get('*', (req, res) => {
-		res.render('index', parameters);
+		res.render(options.index, parameters);
 	});
 
 	app.set('port', options.port);
