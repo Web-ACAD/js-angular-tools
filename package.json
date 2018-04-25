@@ -1,7 +1,7 @@
 {
 	"name": "@webacad/angular-tools",
 	"description": "Tool set for angular applications",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"keywords": [
 		"angular",
 		"express",
