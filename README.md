@@ -22,13 +22,19 @@ Ready to use tool set for angular applications
 ## Installation
 
 ```bash
-$ npm install --save-dev @webacad/angular-tools
+$ npm install --save rxjs
+$ npm install --save @angular/core
+$ npm install --save @angularclass/hmr
+$ npm install --save @webacad/angular-tools
 ```
 
 or with yarn
 
 ```bash
-$ yarn add --dev @webacad/angular-tools
+$ yarn add rxjs
+$ yarn add @angular/core
+$ yarn add @angularclass/hmr
+$ yarn add @webacad/angular-tools
 ```
 
 ## About documentation
@@ -91,20 +97,19 @@ export default createWebpackConfig;
 ```typescript
 import {createServer} from '@webacad/angular-tools/expresjs';
 import createWebpackConfig from '../webpack.config';
+import * as path from 'path';
 
 const environment: string = 'development';
 
 createServer(environment, createWebpackConfig(), {
-    root: __dirname,
+    index: path.join(__dirname, 'views', 'index.handlebars'),
     port: 8080,
     hmr: true,
     staticPaths: {
         '/public': '/path/to/public/dist',    // using express.static
     },
     parameters: {    // parameters passed to handlebar templates
-        isDevelopment: environment === 'development',
-        isProduction: environment === 'production',
-        isHmr: true,
+
     },
 });
 ```
@@ -113,25 +118,25 @@ createServer(environment, createWebpackConfig(), {
 
 ```html
 <!DOCTYPE html>
-<html lang="cs">
+<html>
     <head>
         <meta charset="UTF-8">
         <base href="/">
 
-        {{#if isProduction}}
+        {{#if production}}
             <link rel="stylesheet" href="{{assets 'styles/css'}}">
         {{/if}}
     </head>
     <body>
-        <my-app>Loading...</my-app>
+        <my-app>Loading...</sm-app>
 
         <script src="{{asset 'manifest/js'}}"></script>
 
-        {{#if isHmr}}
+        {{#if hmr}}
             <script src="{{asset 'hmr/js'}}"></script>
         {{/if}}
 
-        {{#if isDevelopment}}
+        {{#if development}}
             <script src="{{asset 'styles/js'}}"></script>
         {{/if}}
 
@@ -141,7 +146,13 @@ createServer(environment, createWebpackConfig(), {
 </html>
 ```
 
-## Assets
+### Build-in template variables
+
+* `production`: True for production environment
+* `development`: True for development environment
+* `hmr`: True if hot module replacement is allowed
+
+### Assets
 
 **Styles/css:**
 
@@ -179,18 +190,18 @@ import {AppModule} from './app.module';
 const bootstrap = () => platformBrowserDynamic().bootstrapModule(AppModule);
 
 if (process.env.NODE_ENV === 'production') {
-	enableProdMode();
-	bootstrap();
+    enableProdMode();
+    bootstrap();
 
 } else {
-	Error['stackTraceLimit'] = Infinity;
-	require('zone.js/dist/long-stack-trace-zone');
+    Error['stackTraceLimit'] = Infinity;
+    require('zone.js/dist/long-stack-trace-zone');
 
-	if (module['hot']) {
-		hmrBootstrap(module, bootstrap);
-	} else {
-		bootstrap();
-	}
+    if (module['hot']) {
+        hmrBootstrap(module, bootstrap);
+    } else {
+        bootstrap();
+    }
 }
 ```
 
@@ -201,8 +212,8 @@ if (process.env.NODE_ENV === 'production') {
 ```json
 {
     "scripts": {
-    	"build": "webpack",
-    	"start": "ts-node server/server.ts"
+        "build": "webpack",
+        "start": "ts-node server/server.ts"
     }
 }
 ```
