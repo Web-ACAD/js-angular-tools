@@ -1,25 +1,16 @@
-declare interface AssetsList
-{
-	[entry: string]: {
-		[type: string]: string,
-	},
-}
+import {getAssets, AssetsList} from '../webpack';
 
 
 export function assetHelperFactory(manifestPath: string): (asset: string) => string
 {
-	let cache: AssetsList;
-	let loaded: boolean = false;
+	let assetsCache: AssetsList;
 
-	const getAssets = (): AssetsList => {
-		if (loaded) {
-			return cache;
+	const _getAssets = (): AssetsList => {
+		if (typeof assetsCache !== 'undefined') {
+			return assetsCache;
 		}
 
-		cache = require(manifestPath);
-		loaded = true;
-
-		return cache;
+		return assetsCache = getAssets(manifestPath);
 	};
 
 	return (asset: string): string => {
@@ -29,7 +20,7 @@ export function assetHelperFactory(manifestPath: string): (asset: string) => str
 			throw new Error(`assets: asset ${asset} is invalid, expected format is "entry/type"`);
 		}
 
-		const assets = getAssets();
+		const assets = _getAssets();
 		const entry = assetParts[0];
 		const type = assetParts[1];
 

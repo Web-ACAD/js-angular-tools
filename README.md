@@ -106,7 +106,7 @@ createServer(environment, createWebpackConfig(), {
     port: 8080,
     hmr: true,
     staticPaths: {
-        '/public': '/path/to/public/dist',    // using express.static
+        '/public/images': '/path/to/public/images',    // using express.static
     },
     parameters: {    // parameters passed to handlebar templates
 

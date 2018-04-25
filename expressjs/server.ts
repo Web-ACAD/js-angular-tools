@@ -1,5 +1,6 @@
 import {assetHelperFactory} from '../handlebars';
 import {EnvironmentType} from '../types';
+import {getAssets} from '../webpack';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as exphbs from 'express-handlebars';
@@ -43,11 +44,31 @@ export function createServer(environment: EnvironmentType, webpackConfig: webpac
 		app.enable('view cache');
 	}
 
-	if (typeof options.staticPaths !== 'undefined') {
-		for (let staticUrl in options.staticPaths) {
-			if (options.staticPaths.hasOwnProperty(staticUrl)) {
-				app.use(staticUrl, express.static(options.staticPaths[staticUrl]));
+	if (typeof options.staticPaths === 'undefined') {
+		options.staticPaths = {};
+	}
+
+	if (!isDev) {
+		const assets = getAssets(manifestPath);
+
+		for (let entryName in webpackConfig.entry) {
+			if (webpackConfig.entry.hasOwnProperty(entryName)) {
+				if (typeof assets[entryName] === 'undefined') {
+					continue;
+				}
+
+				let asset = assets[entryName];
+				let entryFile = webpackConfig.entry[entryName];
+				let entryPath = asset[Object.keys(asset)[0]];
+
+				options.staticPaths[entryPath] = entryFile;
 			}
+		}
+	}
+
+	for (let staticUrl in options.staticPaths) {
+		if (options.staticPaths.hasOwnProperty(staticUrl)) {
+			app.use(staticUrl, express.static(options.staticPaths[staticUrl]));
 		}
 	}
 
