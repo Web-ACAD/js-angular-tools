@@ -5,7 +5,6 @@ import * as path from 'path';
 import * as ExtractTextPlugin from 'extract-text-webpack-plugin';
 import * as AssetsPlugin from 'assets-webpack-plugin';
 import {EnvironmentType, WebpackConfigFactoryOptions} from '../types';
-import * as _ from 'lodash';
 
 
 export function webpackConfigFactory(environment: EnvironmentType, options: WebpackConfigFactoryOptions): webpack.Configuration
@@ -84,7 +83,7 @@ export function webpackConfigFactory(environment: EnvironmentType, options: Webp
 		},
 	];
 
-	if (!_.isUndefined(options.postcss) && !_.isUndefined(options.postcss.config)) {
+	if (typeof options.postcss !== 'undefined' && typeof options.postcss.config !== 'undefined') {
 		cssLoadersConfig.push({
 			loader: 'postcss-loader',
 			options: {
@@ -110,7 +109,7 @@ export function webpackConfigFactory(environment: EnvironmentType, options: Webp
 	}
 
 	if (isDev) {
-		const developmentCssLoadersConfig: any = _.clone(cssLoadersConfig);
+		const developmentCssLoadersConfig: Array<any> = cssLoadersConfig.map((cssLoader) => cssLoader);
 		developmentCssLoadersConfig.unshift({
 			loader: 'style-loader',
 			options: {
@@ -152,22 +151,22 @@ export function webpackConfigFactory(environment: EnvironmentType, options: Webp
 
 function populateDefaultOptions(options: WebpackConfigFactoryOptions): WebpackConfigFactoryOptions
 {
-	if (_.isUndefined(options.webpack)) {
+	if (typeof options.webpack === 'undefined') {
 		options.webpack = {
 			analyze: false,
 			entry: {},
 		};
 	}
 
-	if (_.isUndefined(options.webpack.plugins)) {
+	if (typeof options.webpack.plugins === 'undefined') {
 		options.webpack.plugins = {};
 	}
 
-	if (_.isUndefined(options.webpack.plugins.define)) {
+	if (typeof options.webpack.plugins.define === 'undefined') {
 		options.webpack.plugins.define = {};
 	}
 
-	if (_.isUndefined(options.webpack.fonts)) {
+	if (typeof options.webpack.fonts === 'undefined') {
 		options.webpack.fonts = {};
 	}
 

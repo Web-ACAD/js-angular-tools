@@ -9,7 +9,6 @@ import * as webpackHotMiddleware from 'webpack-hot-middleware';
 import * as path from 'path';
 import * as http from 'http';
 import * as nocache from 'nocache';
-import * as _ from 'lodash';
 
 
 export declare interface ExpressServerOptions
@@ -44,10 +43,12 @@ export function createServer(environment: EnvironmentType, webpackConfig: webpac
 		app.enable('view cache');
 	}
 
-	if (!_.isUndefined(options.staticPaths)) {
-		_.forEach(options.staticPaths, (staticPath, staticUrl) => {
-			app.use(staticUrl, express.static(staticPath));
-		});
+	if (typeof options.staticPaths !== 'undefined') {
+		for (let staticUrl in options.staticPaths) {
+			if (options.staticPaths.hasOwnProperty(staticUrl)) {
+				app.use(staticUrl, express.static(options.staticPaths[staticUrl]));
+			}
+		}
 	}
 
 	app.use(bodyParser.json());
@@ -73,8 +74,8 @@ export function createServer(environment: EnvironmentType, webpackConfig: webpac
 		hmr: options.hmr,
 	};
 
-	if (!_.isUndefined(options.parameters)) {
-		parameters = _.merge(parameters, options.parameters);
+	if (typeof options.parameters !== 'undefined') {
+		parameters = {...options.parameters, ...parameters};
 	}
 
 	app.get('*', (req, res) => {
