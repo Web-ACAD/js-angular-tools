@@ -17,6 +17,7 @@ export declare interface ExpressServerOptions
 	index: string,
 	port: number,
 	staticPaths?: {[url: string]: string},
+	exportEntries?: Array<string>,
 	hmr?: boolean,
 	parameters?: {[name: string]: any},
 }
@@ -48,12 +49,20 @@ export function createServer(environment: EnvironmentType, webpackConfig: webpac
 		options.staticPaths = {};
 	}
 
+	if (typeof options.exportEntries === 'undefined') {
+		options.exportEntries = [];
+	}
+
 	if (!isDev) {
 		const assets = getAssets(manifestPath);
 
 		for (let entryName in webpackConfig.entry) {
 			if (webpackConfig.entry.hasOwnProperty(entryName)) {
 				if (typeof assets[entryName] === 'undefined') {
+					continue;
+				}
+
+				if (options.exportEntries.indexOf(entryName) < 0) {
 					continue;
 				}
 
