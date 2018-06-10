@@ -132,7 +132,7 @@ export function webpackConfigFactory(environment: EnvironmentType, options: Webp
 		});
 
 		config.plugins.push(new ExtractTextPlugin({
-			filename: 'styles.css',
+			filename: 'styles.[chunkhash].css',
 			allChunks: true,
 		}));
 	}
