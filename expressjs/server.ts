@@ -67,10 +67,20 @@ export function createServer(environment: EnvironmentType, webpackConfig: webpac
 				}
 
 				let asset = assets[entryName];
-				let entryFile = webpackConfig.entry[entryName];
-				let entryPath = asset[Object.keys(asset)[0]];
 
-				options.staticPaths[entryPath] = entryFile;
+				for (let assetName in asset) {
+					if (asset.hasOwnProperty(assetName)) {
+						let assetPath = asset[assetName];
+
+						if (!assetPath.startsWith(webpackConfig.output.publicPath)) {
+							continue;
+						}
+
+						let assetFile = webpackConfig.output.path + '/' + assetPath.substr(webpackConfig.output.publicPath.length);
+
+						options.staticPaths[assetPath] = assetFile;
+					}
+				}
 			}
 		}
 	}
