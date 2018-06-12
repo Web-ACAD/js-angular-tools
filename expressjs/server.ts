@@ -1,6 +1,5 @@
 import {assetHelperFactory} from '../handlebars';
 import {EnvironmentType} from '../types';
-import {getAssets} from '../webpack';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as exphbs from 'express-handlebars';
@@ -17,7 +16,6 @@ export declare interface ExpressServerOptions
 	index: string,
 	port: number,
 	staticPaths?: {[url: string]: string},
-	exportEntries?: Array<string>,
 	hmr?: boolean,
 	parameters?: {[name: string]: any},
 	events?: {
@@ -52,44 +50,12 @@ export function createServer(environment: EnvironmentType, webpackConfig: webpac
 		options.staticPaths = {};
 	}
 
-	if (typeof options.exportEntries === 'undefined') {
-		options.exportEntries = [];
-	}
-
 	if (typeof options.events === 'undefined') {
 		options.events = {};
 	}
 
 	if (!isDev) {
-		const assets = getAssets(manifestPath);
-
-		for (let entryName in webpackConfig.entry) {
-			if (webpackConfig.entry.hasOwnProperty(entryName)) {
-				if (typeof assets[entryName] === 'undefined') {
-					continue;
-				}
-
-				if (options.exportEntries.indexOf(entryName) < 0) {
-					continue;
-				}
-
-				let asset = assets[entryName];
-
-				for (let assetName in asset) {
-					if (asset.hasOwnProperty(assetName)) {
-						let assetPath = asset[assetName];
-
-						if (!assetPath.startsWith(webpackConfig.output.publicPath)) {
-							continue;
-						}
-
-						let assetFile = webpackConfig.output.path + '/' + assetPath.substr(webpackConfig.output.publicPath.length);
-
-						options.staticPaths[assetPath] = assetFile;
-					}
-				}
-			}
-		}
+		options.staticPaths[webpackConfig.output.publicPath] = webpackConfig.output.path;
 	}
 
 	for (let staticUrl in options.staticPaths) {

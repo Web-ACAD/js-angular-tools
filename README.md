@@ -108,11 +108,6 @@ createServer(environment, createWebpackConfig(), {
     staticPaths: {
         '/public/images': '/path/to/public/images',    // using express.static
     },
-    exportEntries: [    // list of public entry names (uses static paths in background)
-        'polyfills',
-        'app',
-        'styles',
-    ],
     parameters: {    // parameters passed to handlebar templates
 
     },
