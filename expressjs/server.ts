@@ -20,6 +20,9 @@ export declare interface ExpressServerOptions
 	exportEntries?: Array<string>,
 	hmr?: boolean,
 	parameters?: {[name: string]: any},
+	events?: {
+		onCreateRoutes?: (app: any) => void,
+	},
 }
 
 
@@ -51,6 +54,10 @@ export function createServer(environment: EnvironmentType, webpackConfig: webpac
 
 	if (typeof options.exportEntries === 'undefined') {
 		options.exportEntries = [];
+	}
+
+	if (typeof options.events === 'undefined') {
+		options.events = {};
 	}
 
 	if (!isDev) {
@@ -116,6 +123,10 @@ export function createServer(environment: EnvironmentType, webpackConfig: webpac
 
 	if (typeof options.parameters !== 'undefined') {
 		parameters = {...options.parameters, ...parameters};
+	}
+
+	if (typeof options.events.onCreateRoutes !== 'undefined') {
+		options.events.onCreateRoutes(app);
 	}
 
 	app.get('*', (req, res) => {
