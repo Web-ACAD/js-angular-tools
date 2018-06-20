@@ -23,7 +23,7 @@ Ready to use tool set for angular applications
 
 ```bash
 $ npm install --save rxjs@^5.5.0
-$ npm install --save @angular/core
+$ npm install --save @angular/core@^5.0
 $ npm install --save @angularclass/hmr
 $ npm install --save @webacad/angular-tools
 ```
@@ -32,7 +32,7 @@ or with yarn
 
 ```bash
 $ yarn add rxjs@^5.5.0
-$ yarn add @angular/core
+$ yarn add @angular/core^5.0
 $ yarn add @angularclass/hmr
 $ yarn add @webacad/angular-tools
 ```
