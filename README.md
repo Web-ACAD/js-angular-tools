@@ -130,7 +130,7 @@ createServer(environment, createWebpackConfig(), {
         {{/if}}
     </head>
     <body>
-        <my-app>Loading...</sm-app>
+        <my-app>Loading...</my-app>
 
         <script src="{{asset 'manifest/js'}}"></script>
 
