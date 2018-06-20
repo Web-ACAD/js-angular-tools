@@ -40,15 +40,6 @@ export function webpackConfigFactory(environment: EnvironmentType, options: Webp
 					test: /\.html$/,
 					loader: 'raw-loader',
 				},
-				{
-					test: /.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
-					loader: 'file-loader',
-					options: {
-						name: '[name].[ext]',
-						outputPath: options.webpack.fonts.outputPath,
-						publicPath: options.webpack.fonts.publicPath,
-					},
-				},
 			],
 		},
 
@@ -108,6 +99,18 @@ export function webpackConfigFactory(environment: EnvironmentType, options: Webp
 		config.plugins.push(new webpack.HotModuleReplacementPlugin);
 	}
 
+	if (typeof options.webpack.fonts !== 'undefined') {
+		config.module['loaders'].push({
+			test: /.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
+			loader: 'file-loader',
+			options: {
+				name: '[name].[ext]',
+				outputPath: options.webpack.fonts.outputPath,
+				publicPath: options.webpack.fonts.publicPath,
+			},
+		});
+	}
+
 	if (isDev) {
 		const developmentCssLoadersConfig: Array<any> = cssLoadersConfig.map((cssLoader) => cssLoader);
 		developmentCssLoadersConfig.unshift({
@@ -164,10 +167,6 @@ function populateDefaultOptions(options: WebpackConfigFactoryOptions): WebpackCo
 
 	if (typeof options.webpack.plugins.define === 'undefined') {
 		options.webpack.plugins.define = {};
-	}
-
-	if (typeof options.webpack.fonts === 'undefined') {
-		options.webpack.fonts = {};
 	}
 
 	return options;

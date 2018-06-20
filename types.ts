@@ -21,8 +21,8 @@ export declare interface WebpackConfigFactoryOptions
 			define?: {[name: string]: any},
 		},
 		fonts?: {
-			outputPath?: string,
-			publicPath?: string,
+			outputPath: string,
+			publicPath: string,
 		},
 	},
 }
