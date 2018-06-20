@@ -46,10 +46,11 @@ $ yarn add @webacad/angular-tools
 **webpack.config.ts:**
 
 ```typescript
+import {EnvironmentType} from '@webacad/angular-tools';
 import {webpackConfigFactory} from '@webacad/angular-tools/webpack';
 import * as webpack from 'webpack';
 
-const environment: string = 'development';    // possible values are "development" or "production"
+const environment: EnvironmentType = 'development';    // possible values are "development" or "production"
 
 function createWebpackConfig(): webpack.Configuration
 {
@@ -95,11 +96,12 @@ export default createWebpackConfig;
 **server/server.ts:**
 
 ```typescript
+import {EnvironmentType} from '@webacad/angular-tools';
 import {createServer} from '@webacad/angular-tools/expresjs';
 import createWebpackConfig from '../webpack.config';
 import * as path from 'path';
 
-const environment: string = 'development';
+const environment: EnvironmentType = 'development';
 
 createServer(environment, createWebpackConfig(), {
     index: path.join(__dirname, 'views', 'index.handlebars'),
