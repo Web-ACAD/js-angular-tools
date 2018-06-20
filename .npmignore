@@ -1,4 +1,4 @@
-.idea/
+.idea
 .travis.yml
 tsconfig.json
 tslint.json
