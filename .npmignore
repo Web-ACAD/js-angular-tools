@@ -1,5 +1,5 @@
-.git
-.idea
+.git/**/*
+.idea/**/*
 .travis.yml
 tsconfig.json
 tslint.json
